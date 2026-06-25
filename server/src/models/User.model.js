@@ -24,7 +24,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -90,7 +89,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Optimizes user lookup by email during authentication
-userSchema.index({ email: 1 });
+userSchema.index({ email: 1 }, { unique: true });
 
 /**
  * Hash password before persisting user documents.
