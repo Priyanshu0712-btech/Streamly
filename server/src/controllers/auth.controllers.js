@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import generateAvatar from "../utils/generateAvatar.js";
+import { upsertStreamUser } from "../services/stream.service.js";
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET_KEY, {
@@ -9,58 +10,112 @@ const generateToken = (userId) => {
 };
 
 export const signup = async (req, res) => {
-  const { email, password, fullName } = req.body;
-
   try {
+    const { email, password, fullName } = req.body;
+
+    // Validation
     if (!email || !password || !fullName) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      });
     }
+
+    const normalizedEmail = email.toLowerCase().trim();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
     }
 
-    const existingUser = await User.findOne({ email });
+    // Check existing user
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+    });
+
     if (existingUser) {
-      return res.status(400).json({ message: "Email already exists, please use a diffrent one" });
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered",
+      });
     }
 
+    // Generate default avatar
     const randomAvatar = generateAvatar(fullName);
 
+    // Create user
     const newUser = await User.create({
-      email,
-      fullName,
+      email: normalizedEmail,
+      fullName: fullName.trim(),
       password,
       profilePic: randomAvatar,
     });
 
+    // Create Stream user
+    try {
+      await upsertStreamUser({
+        id: newUser._id.toString(),
+        name: newUser.fullName,
+        image: newUser.profilePic || "",
+      });
+
+      console.log(
+        `Stream user created for ${newUser.fullName}`
+      );
+    } catch (streamError) {
+      console.error(
+        "Failed to create Stream user:",
+        streamError
+      );
+    }
+
+    // Generate JWT
     const token = generateToken(newUser._id);
 
+    // Set Cookie
     res.cookie("jwt", token, {
-      httpOnly: true, // prevent XSS attacks,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict", // prevent CSRF attacks
+      sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    // Response
     res.status(201).json({
       success: true,
-      newUser,
+      user: {
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        profilePic: newUser.profilePic,
+        bio: newUser.bio,
+        nativeLanguage: newUser.nativeLanguage,
+        location: newUser.location,
+        isOnboarded: newUser.isOnboarded,
+        createdAt: newUser.createdAt,
+      },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Signup Error:", error);
 
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
@@ -116,3 +171,5 @@ export const logout = (req, res) => {
     message: "Logout successful",
   });
 };
+
+
