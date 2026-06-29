@@ -169,21 +169,15 @@ export const blockUser = async (myId, targetId) => {
 };
 
 export const unblockUser = async (myId, targetId) => {
-  try {
-    const result = await friendService.unblockUser(req.user.id, req.params.id);
+  await User.findByIdAndUpdate(myId, {
+    $pull: {
+      blockedUsers: targetId,
+    },
+  });
 
-    res.status(200).json({
-      success: true,
-      ...result,
-    });
-  } catch (error) {
-    console.error("Error in unblockUser:", error.message);
-
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  return {
+    message: "User unblocked successfully",
+  };
 };
 
 export const getBlockedUsers = async (userId) => {};
