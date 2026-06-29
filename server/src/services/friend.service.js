@@ -180,4 +180,10 @@ export const unblockUser = async (myId, targetId) => {
   };
 };
 
-export const getBlockedUsers = async (userId) => {};
+export const getBlockedUsers = async (userId) => {
+  const user = await User.findById(userId)
+    .select("blockedUsers")
+    .populate("blockedUsers", "fullName profilePic");
+
+  return user.blockedUsers;
+};

@@ -143,4 +143,20 @@ export const unblockUser = async (req, res) => {
   }
 };
 
-export const getBlockedUsers = async (req, res) => {};
+export const getBlockedUsers = async (req, res) => {
+  try {
+    const blockedUsers = await friendService.getBlockedUsers(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      blockedUsers,
+    });
+  } catch (error) {
+    console.error("Error in getBlockedUsers:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
