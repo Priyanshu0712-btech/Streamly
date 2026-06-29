@@ -107,7 +107,23 @@ export const getRecommendedUsers = async (req, res) => {
   }
 };
 
-export const blockUser = async (req, res) => {};
+export const blockUser = async (req, res) => {
+  try {
+    const result = await friendService.blockUser(req.user.id, req.params.id);
+
+    res.status(200).json({
+      success: true,
+      ...result,
+    });
+  } catch (error) {
+    console.error("Error in blockUser:", error.message);
+
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 export const unblockUser = async (req, res) => {};
 

@@ -143,7 +143,30 @@ export const getRecommendedUsers = async (currentUser) => {
   });
 };
 
-export const blockUser = async (myId, targetId) => {};
+export const blockUser = async (myId, targetId) => {
+  if (myId === targetId) {
+    throw new Error("You can't block yourself");
+  }
+
+  await User.findByIdAndUpdate(myId, {
+    $addToSet: {
+      blockedUsers: targetId,
+    },
+    $pull: {
+      friends: targetId,
+    },
+  });
+
+  await User.findByIdAndUpdate(targetId, {
+    $pull: {
+      friends: myId,
+    },
+  });
+
+  return {
+    message: "User blocked successfully",
+  };
+};
 
 export const unblockUser = async (myId, targetId) => {};
 
