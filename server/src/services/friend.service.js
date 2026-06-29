@@ -107,24 +107,41 @@ export const getOutgoingFriendRequests = async (userId) => {
   return FriendRequest.find({
     sender: userId,
     status: "pending",
-  }).populate(
-    "recipient",
-    "fullName profilePic nativeLanguage",
-  );
+  }).populate("recipient", "fullName profilePic nativeLanguage");
 };
 
 export const getMyFriends = async (userId) => {
-    const user = await User.findById(userId)
+  const user = await User.findById(userId)
     .select("friends")
-    .populate(
-      "friends",
-      "fullName profilePic nativeLanguage"
-    );
+    .populate("friends", "fullName profilePic nativeLanguage");
 
   return user.friends;
 };
 
-export const getRecommendedUsers = async (currentUser) => {};
+export const getRecommendedUsers = async (currentUser) => {
+  return User.find({
+    $and: [
+      {
+        _id: {
+          $ne: currentUser._id,
+        },
+      },
+      {
+        _id: {
+          $nin: currentUser.friends,
+        },
+      },
+      {
+        _id: {
+          $nin: currentUser.blockedUsers,
+        },
+      },
+      {
+        isOnboarded: true,
+      },
+    ],
+  });
+};
 
 export const blockUser = async (myId, targetId) => {};
 

@@ -92,7 +92,20 @@ export const getMyFriends = async (req, res) => {
   }
 };
 
-export const getRecommendedUsers = async (req, res) => {};
+export const getRecommendedUsers = async (req, res) => {
+  try {
+    const users = await friendService.getRecommendedUsers(req.user);
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error in getRecommendedUsers:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
 
 export const blockUser = async (req, res) => {};
 
