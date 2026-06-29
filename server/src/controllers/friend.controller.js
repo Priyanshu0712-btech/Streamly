@@ -125,6 +125,16 @@ export const blockUser = async (req, res) => {
   }
 };
 
-export const unblockUser = async (req, res) => {};
+export const unblockUser = async (req, res) => {
+  await User.findByIdAndUpdate(myId, {
+    $pull: {
+      blockedUsers: targetId,
+    },
+  });
+
+  return {
+    message: "User unblocked successfully",
+  };
+};
 
 export const getBlockedUsers = async (req, res) => {};
