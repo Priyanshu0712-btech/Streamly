@@ -59,7 +59,23 @@ export const getFriendRequests = async (req, res) => {
   }
 };
 
-export const getOutgoingFriendReqs = async (req, res) => {};
+export const getOutgoingFriendReqs = async (req, res) => {
+  try {
+    const requests = await friendService.getOutgoingFriendRequests(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      requests,
+    });
+  } catch (error) {
+    console.error("Error in getOutgoingFriendReqs:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
 
 export const getMyFriends = async (req, res) => {};
 

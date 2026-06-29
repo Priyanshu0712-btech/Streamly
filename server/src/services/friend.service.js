@@ -103,7 +103,15 @@ export const getFriendRequests = async (userId) => {
   };
 };
 
-export const getOutgoingFriendRequests = async (userId) => {};
+export const getOutgoingFriendRequests = async (userId) => {
+  return FriendRequest.find({
+    sender: userId,
+    status: "pending",
+  }).populate(
+    "recipient",
+    "fullName profilePic nativeLanguage",
+  );
+};
 
 export const getMyFriends = async (userId) => {};
 
