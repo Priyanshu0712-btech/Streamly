@@ -23,7 +23,24 @@ export const sendFriendRequest = async (req, res) => {
   }
 };
 
-export const acceptFriendRequest = async (req, res) => {};
+
+export const acceptFriendRequest = async (req, res) => {
+  try {
+    await friendService.acceptFriendRequest(req.params.id, req.user.id);
+
+    res.status(200).json({
+      success: true,
+      message: "Friend request accepted",
+    });
+  } catch (error) {
+    console.error("Error in acceptFriendRequest:", error.message);
+
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 export const getFriendRequests = async (req, res) => {};
 

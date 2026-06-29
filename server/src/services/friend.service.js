@@ -45,7 +45,7 @@ export const sendFriendRequest = async (senderId, recipientId) => {
 
   if (existingRequest) {
     throw new Error(
-      "A friend request already exists between you and this user"
+      "A friend request already exists between you and this user",
     );
   }
 
@@ -57,8 +57,35 @@ export const sendFriendRequest = async (senderId, recipientId) => {
   return friendRequest;
 };
 
+export const acceptFriendRequest = async (requestId, currentUserId) => {
+  const friendRequest = await FriendRequest.findById(requestId);
 
-export const acceptFriendRequest = async (requestId, currentUserId) => {};
+  if (!friendRequest) {
+    throw new Error("Friend request not found");
+  }
+
+  if (friendRequest.recipient.toString() !== currentUserId) {
+    throw new Error("You are not authorized to accept this request");
+  }
+
+  friendRequest.status = "accepted";
+  await friendRequest.save();
+
+  await User.findByIdAndUpdate(friendRequest.sender, {
+    $addToSet: {
+      friends: friendRequest.recipient,
+    },
+  });
+
+  await User.findByIdAndUpdate(friendRequest.recipient, {
+    $addToSet: {
+      friends: friendRequest.sender,
+    },
+  });
+
+  return friendRequest;
+};
+
 
 export const getFriendRequests = async (userId) => {};
 
