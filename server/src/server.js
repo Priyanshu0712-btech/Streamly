@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
+import friendRoutes from "./routes/friend.routes.js";
 
 const app = express();
 const PORT = process.env.PORT; 
@@ -15,6 +16,7 @@ app.use(cookieParser());
 
 
 app.use("/api/v1/auth", authRoutes);
+app.use("api/v1/friends", friendRoutes);
 
 app.get("/", (req, res) => {
     res.send("Server is working");
