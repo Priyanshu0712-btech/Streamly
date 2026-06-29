@@ -113,7 +113,16 @@ export const getOutgoingFriendRequests = async (userId) => {
   );
 };
 
-export const getMyFriends = async (userId) => {};
+export const getMyFriends = async (userId) => {
+    const user = await User.findById(userId)
+    .select("friends")
+    .populate(
+      "friends",
+      "fullName profilePic nativeLanguage"
+    );
+
+  return user.friends;
+};
 
 export const getRecommendedUsers = async (currentUser) => {};
 
