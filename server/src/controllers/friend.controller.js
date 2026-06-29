@@ -23,7 +23,6 @@ export const sendFriendRequest = async (req, res) => {
   }
 };
 
-
 export const acceptFriendRequest = async (req, res) => {
   try {
     await friendService.acceptFriendRequest(req.params.id, req.user.id);
@@ -42,7 +41,23 @@ export const acceptFriendRequest = async (req, res) => {
   }
 };
 
-export const getFriendRequests = async (req, res) => {};
+export const getFriendRequests = async (req, res) => {
+  try {
+    const requests = await friendService.getFriendRequests(req.user.id);
+
+    res.status(200).json({
+      success: true,
+      ...requests,
+    });
+  } catch (error) {
+    console.error("Error in getFriendRequests:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
 
 export const getOutgoingFriendReqs = async (req, res) => {};
 

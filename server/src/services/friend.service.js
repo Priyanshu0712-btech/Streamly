@@ -86,8 +86,22 @@ export const acceptFriendRequest = async (requestId, currentUserId) => {
   return friendRequest;
 };
 
+export const getFriendRequests = async (userId) => {
+  const incomingReqs = await FriendRequest.find({
+    recipient: userId,
+    status: "pending",
+  }).populate("sender", "fullName profilePic nativeLanguage");
 
-export const getFriendRequests = async (userId) => {};
+  const acceptedReqs = await FriendRequest.find({
+    sender: userId,
+    status: "accepted",
+  }).populate("recipient", "fullName profilePic");
+
+  return {
+    incomingReqs,
+    acceptedReqs,
+  };
+};
 
 export const getOutgoingFriendRequests = async (userId) => {};
 
