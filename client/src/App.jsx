@@ -1,9 +1,78 @@
-import React from 'react'
+import { Navigate, Route, Routes } from "react-router";
+
+import HomePage from "./pages/HomePage.jsx";
+import SignUpPage from "./pages/SignUpPage";
+import LoginPage from "./pages/LoginPage";
+import OnboardingPage from "./pages/OnboardingPage.jsx";
+
+import { Toaster } from "react-hot-toast";
+
+import useAuthUser from "./hooks/useAuthUser.js";
+import { useThemeStore } from "./store/useThemeStore.js";
+
+
 
 const App = () => {
-  return (
-    <div>App</div>
-  )
-}
+  const { isLoading, authUser } = useAuthUser();
+  const { theme } = useThemeStore();
 
-export default App
+  const isAuthenticated = Boolean(authUser);
+  const isOnboarded = authUser?.isOnboarded;
+
+  return (
+    <div className="h-screen">
+      <Routes>
+        <Route
+            path="/"
+            element={
+              isAuthenticated && isOnboarded ? (
+                <Layout showSidebar={true}>
+                  <HomePage />
+                </Layout>
+              ) : (
+                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              )
+            }
+          />
+        <Route
+            path="/signup"
+            element={
+              !isAuthenticated ? (
+                <SignUpPage />
+              ) : (
+                <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              !isAuthenticated ? (
+                <LoginPage />
+              ) : (
+                <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+              )
+            }
+          />
+
+        <Route
+            path="/onboarding"
+            element={
+              isAuthenticated ? (
+                !isOnboarded ? (
+                  <OnboardingPage />
+                ) : (
+                  <Navigate to="/" />
+                )
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+      </Routes>
+
+    </div>
+  );
+};
+
+export default App;
