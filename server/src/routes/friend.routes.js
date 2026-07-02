@@ -10,7 +10,7 @@ import {
   blockUser,
   unblockUser,
   getBlockedUsers
-} from "../controllers/user.controller.js";
+} from "../controllers/friend.controller.js";
 
 const router = express.Router();
 
