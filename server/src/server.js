@@ -10,7 +10,7 @@ import friendRoutes from "./routes/friend.routes.js";
 const app = express();
 const PORT = process.env.PORT; 
  
-const __dirname = path.resolve(); 
+const __dirname = path.resolve();  
 
 import { connectDB } from "./config/db.js";
 
@@ -29,11 +29,11 @@ app.use("/api/v1/auth", authRoutes);
 app.use("api/v1/friends", friendRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.use(express.static(path.join(__dirname, "../client/dist")));
 
   // Sends the frontend's built index.html file to the client for rendering the app
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
   });
 }
 
