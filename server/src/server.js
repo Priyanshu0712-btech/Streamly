@@ -12,12 +12,14 @@ const PORT = process.env.PORT;
  
 const __dirname = path.resolve();  
 
+const __dirname = path.resolve(); 
+
 import { connectDB } from "./config/db.js";
 
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true, // allow frontend to send cookies
+    credentials: true,
   })
 );
 
