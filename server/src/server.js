@@ -12,7 +12,6 @@ const PORT = process.env.PORT;
  
 const __dirname = path.resolve();  
 
-const __dirname = path.resolve(); 
 
 import { connectDB } from "./config/db.js";
 
@@ -28,7 +27,7 @@ app.use(cookieParser());
 
 
 app.use("/api/v1/auth", authRoutes);
-app.use("api/v1/friends", friendRoutes);
+app.use("/api/v1/friends", friendRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));

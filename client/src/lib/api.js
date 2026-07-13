@@ -1,15 +1,19 @@
 import { axiosInstance } from "./axios";
 
 export const signup = async (signupData) => {
-    const response = await axiosInstance.post("/auth/signup", signupData);
-    return response.data;
-}
+  const response = await axiosInstance.post("/auth/signup", signupData);
+  return response.data;
+};
 
 export const login = async (loginData) => {
   const response = await axiosInstance.post("/auth/login", loginData);
   return response.data;
 };
 
+export const logout = async () => {
+  const response = await axiosInstance.post("/auth/logout");
+  return response.data;
+};
 
 export const getAuthUser = async () => {
   try {
@@ -25,3 +29,48 @@ export const completeOnboarding = async (userData) => {
   const response = await axiosInstance.post("/auth/onboarding", userData);
   return response.data;
 };
+
+export async function getUserFriends() {
+  const response = await axiosInstance.get("/friends/friends");
+  return response.data;
+}
+
+export async function getRecommendedUsers() {
+  const response = await axiosInstance.get("/friends");
+  return response.data;
+}
+
+export async function getOutgoingFriendReqs() {
+  const response = await axiosInstance.get("/friends/outgoing-friend-requests");
+  return response.data;
+}
+
+export async function sendFriendRequest(userId) {
+  const response = await axiosInstance.post(`/friends/friend-request/${userId}`);
+  return response.data;
+}
+
+export async function getFriendRequests() {
+  const response = await axiosInstance.get("/friends/friend-requests");
+  return response.data;
+}
+
+export async function acceptFriendRequest(requestId) {
+  const response = await axiosInstance.put(`/friends/friend-request/${requestId}/accept`);
+  return response.data;
+}
+
+export async function blockUser(userId) {
+  const response = await axiosInstance.post(`/friends/block/${userId}`);
+  return response.data;
+}
+
+export async function unblockUser(userId) {
+  const response = await axiosInstance.post(`/friends/unblock/${userId}`);
+  return response.data;
+}
+
+export async function getBlockedUsers() {
+  const response = await axiosInstance.get("/friends/blocked");
+  return response.data;
+}
