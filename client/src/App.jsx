@@ -11,8 +11,6 @@ import useAuthUser from "./hooks/useAuthUser.js";
 import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
 
-
-
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
@@ -20,58 +18,65 @@ const App = () => {
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
 
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen">
       <Routes>
         <Route
-            path="/"
-            element={
-              isAuthenticated && isOnboarded ? (
-                <Layout showSidebar={true}>
-                  <HomePage />
-                </Layout>
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )
-            }
-          />
+          path="/"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <HomePage />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
         <Route
-            path="/signup"
-            element={
-              !isAuthenticated ? (
-                <SignUpPage />
-              ) : (
-                <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-              )
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              !isAuthenticated ? (
-                <LoginPage />
-              ) : (
-                <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-              )
-            }
-          />
+          path="/signup"
+          element={
+            !isAuthenticated ? (
+              <SignUpPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            !isAuthenticated ? (
+              <LoginPage />
+            ) : (
+              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
+            )
+          }
+        />
 
         <Route
-            path="/onboarding"
-            element={
-              isAuthenticated ? (
-                !isOnboarded ? (
-                  <OnboardingPage />
-                ) : (
-                  <Navigate to="/" />
-                )
+          path="/onboarding"
+          element={
+            isAuthenticated ? (
+              !isOnboarded ? (
+                <OnboardingPage />
               ) : (
-                <Navigate to="/login" />
+                <Navigate to="/" />
               )
-            }
-          />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
-
     </div>
   );
 };
