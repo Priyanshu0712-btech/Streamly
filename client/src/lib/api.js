@@ -60,6 +60,11 @@ export async function acceptFriendRequest(requestId) {
   return response.data;
 }
 
+export async function rejectFriendRequest(requestId) {
+  const response = await axiosInstance.put(`/friends/friend-request/${requestId}/reject`);
+  return response.data;
+}
+
 export async function blockUser(userId) {
   const response = await axiosInstance.post(`/friends/block/${userId}`);
   return response.data;

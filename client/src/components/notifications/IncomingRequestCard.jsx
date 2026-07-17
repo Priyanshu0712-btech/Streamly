@@ -1,7 +1,7 @@
 import { CheckIcon, GlobeIcon, MapPinIcon, XIcon } from "lucide-react";
 import { getLanguageFlag } from "../FriendCard";
 
-const IncomingRequestCard = ({ request, onAccept, isPending }) => {
+const IncomingRequestCard = ({ request, onAccept, onReject, isPending }) => {
   const { sender } = request;
 
   return (
@@ -55,7 +55,6 @@ const IncomingRequestCard = ({ request, onAccept, isPending }) => {
               disabled={isPending || request.status === "accepted"}
               onClick={() => onAccept(request._id)}
             >
-              <CheckIcon className="size-4" />
               {isPending ? (
                 <>
                   <span className="loading loading-spinner loading-xs"></span>
@@ -69,9 +68,11 @@ const IncomingRequestCard = ({ request, onAccept, isPending }) => {
               )}
             </button>
 
-            {/* Backend Later */}
-
-            <button className="btn btn-outline btn-error" disabled>
+            <button
+              className="btn btn-outline btn-error"
+              disabled={isPending}
+              onClick={() => onReject(request._id)}
+            >
               <XIcon className="size-4" />
               Decline
             </button>

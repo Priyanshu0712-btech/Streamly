@@ -86,6 +86,25 @@ export const acceptFriendRequest = async (requestId, currentUserId) => {
   return friendRequest;
 };
 
+export const rejectFriendRequestService = async (requestId, userId) => {
+  const friendRequest = await FriendRequest.findById(requestId);
+
+  if (!friendRequest) {
+    throw new Error("Friend request not found");
+  }
+
+  if (friendRequest.recipient.toString() !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  await FriendRequest.findByIdAndDelete(requestId);
+
+  return {
+    success: true,
+    message: "Friend request rejected",
+  };
+};
+
 export const getFriendRequests = async (userId) => {
   const incomingReqs = await FriendRequest.find({
     recipient: userId,

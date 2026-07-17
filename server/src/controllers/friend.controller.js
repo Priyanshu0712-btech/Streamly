@@ -41,6 +41,35 @@ export const acceptFriendRequest = async (req, res) => {
   }
 };
 
+export const rejectFriendRequest = async (req, res) => {
+  try {
+    const result = await friendService.rejectFriendRequestService(
+      req.params.id,
+      req.user.id
+    );
+
+    res.status(200).json(result);
+  } catch (error) {
+    if (error.message === "Friend request not found") {
+      return res.status(404).json({
+        message: error.message,
+      });
+    }
+
+    if (error.message === "Unauthorized") {
+      return res.status(403).json({
+        message: error.message,
+      });
+    }
+
+    console.error(error);
+
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
 export const getFriendRequests = async (req, res) => {
   try {
     const requests = await friendService.getFriendRequests(req.user.id);
