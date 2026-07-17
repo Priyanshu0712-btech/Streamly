@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import BottomNavigation from "./BottomNavigation";
 
 const Layout = ({ children, showSidebar = false }) => {
   return (
@@ -10,9 +11,11 @@ const Layout = ({ children, showSidebar = false }) => {
         <div className="flex flex-1 flex-col min-w-0">
           <Navbar />
 
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
             {children}
           </main>
+
+          {showSidebar && <BottomNavigation />}
         </div>
       </div>
     </div>
