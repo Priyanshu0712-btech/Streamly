@@ -3,6 +3,8 @@ import { getFriendRequests } from "../lib/api";
 
 import NotificationsSkeleton from "../components/notifications/NotificationsSkeleton";
 import NoNotificationsFound from "../components/notifications/NoNotificationsFound";
+import IncomingRequestCard from "../components/notifications/IncomingRequestCard";
+
 
 const NotificationsPage = () => {
   const { data, isLoading } = useQuery({
