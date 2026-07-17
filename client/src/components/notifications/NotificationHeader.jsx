@@ -15,7 +15,11 @@ const NotificationHeader = ({ requestCount }) => {
         </p>
       </div>
 
-      <div className="badge badge-primary badge-lg">{requestCount} Pending</div>
+      {requestCount > 0 && (
+        <div className="badge badge-primary badge-lg">
+          {requestCount} Pending
+        </div>
+      )}
     </div>
   );
 };

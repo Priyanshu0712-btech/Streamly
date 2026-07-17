@@ -1,4 +1,5 @@
 import { CheckCircleIcon, ClockIcon, MessageCircleIcon } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 const ActivityCard = ({ notification }) => {
   const { recipient } = notification;
@@ -23,7 +24,9 @@ const ActivityCard = ({ notification }) => {
             <div className="mt-3 flex items-center gap-4 text-xs opacity-70">
               <span className="flex items-center gap-1">
                 <ClockIcon className="size-3" />
-                Recently
+                {formatDistanceToNow(new Date(notification.updatedAt), {
+                  addSuffix: true,
+                })}
               </span>
 
               <span className="badge badge-success">

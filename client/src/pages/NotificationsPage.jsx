@@ -1,15 +1,40 @@
-import { useQuery } from "@tanstack/react-query";
-import { getFriendRequests } from "../lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { acceptFriendRequest, getFriendRequests } from "../lib/api";
+
+import NotificationHeader from "../components/notifications/NotificationHeader";
+import IncomingRequestCard from "../components/notifications/IncomingRequestCard";
+import ActivityCard from "../components/notifications/ActivityCard";
 import NotificationsSkeleton from "../components/notifications/NotificationsSkeleton";
 import NoNotificationsFound from "../components/notifications/NoNotificationsFound";
-import IncomingRequestCard from "../components/notifications/IncomingRequestCard";
-
 
 const NotificationsPage = () => {
+  const queryClient = useQueryClient();
+
   const { data, isLoading } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: getFriendRequests,
+  });
+
+  const { mutate: acceptRequest, isPending } = useMutation({
+    mutationFn: acceptFriendRequest,
+
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["friendRequests"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["friends"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["users"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["outgoingFriendReqs"],
+        }),
+      ]);
+    },
   });
 
   const incomingRequests = data?.incomingReqs ?? [];
@@ -23,10 +48,7 @@ const NotificationsPage = () => {
     );
   }
 
-  if (
-    incomingRequests.length === 0 &&
-    acceptedRequests.length === 0
-  ) {
+  if (incomingRequests.length === 0 && acceptedRequests.length === 0) {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <NoNotificationsFound />
@@ -34,16 +56,46 @@ const NotificationsPage = () => {
     );
   }
 
-
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto max-w-5xl">
-        <h1 className="text-3xl font-bold">Notifications</h1>
+        <NotificationHeader requestCount={incomingRequests.length} />
 
-        <p className="text-base-content/70 mt-2">
-          Stay updated with your friend requests and activities.
-        </p>
-        <p>{incomingRequests.length}</p>
+        {/* Incoming Requests */}
+
+        {incomingRequests.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold mb-4">Friend Requests</h2>
+
+            <div className="space-y-4">
+              {incomingRequests.map((request) => (
+                <IncomingRequestCard
+                  key={request._id}
+                  request={request}
+                  onAccept={acceptRequest}
+                  isPending={isPending}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Activity */}
+
+        {acceptedRequests.length > 0 && (
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+
+            <div className="space-y-4">
+              {acceptedRequests.map((notification) => (
+                <ActivityCard
+                  key={notification._id}
+                  notification={notification}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

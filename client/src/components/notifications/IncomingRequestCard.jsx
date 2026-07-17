@@ -49,16 +49,24 @@ const IncomingRequestCard = ({ request, onAccept, isPending }) => {
             </div>
           </div>
 
-          {/* Buttons */}
-
           <div className="flex gap-2">
             <button
               className="btn btn-primary"
-              disabled={isPending}
+              disabled={isPending || request.status === "accepted"}
               onClick={() => onAccept(request._id)}
             >
               <CheckIcon className="size-4" />
-              Accept
+              {isPending ? (
+                <>
+                  <span className="loading loading-spinner loading-xs"></span>
+                  Accepting...
+                </>
+              ) : (
+                <>
+                  <CheckIcon className="size-4" />
+                  Accept
+                </>
+              )}
             </button>
 
             {/* Backend Later */}
