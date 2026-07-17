@@ -1,76 +1,66 @@
 import { Link, useLocation } from "react-router";
-import { BellIcon, HomeIcon, ShipWheelIcon, UsersIcon } from "lucide-react";
+import { ShipWheelIcon } from "lucide-react";
 
 import useAuthUser from "../hooks/useAuthUser";
+import { navigation } from "../constants/navigation";
 
 const Sidebar = () => {
-  const { authUser } = useAuthUser();
   const { pathname } = useLocation();
-
-  const navItems = [
-    {
-      label: "Home",
-      path: "/",
-      icon: HomeIcon,
-    },
-    {
-      label: "Friends",
-      path: "/friends",
-      icon: UsersIcon,
-    },
-    {
-      label: "Notifications",
-      path: "/notifications",
-      icon: BellIcon,
-    },
-  ];
+  const { authUser } = useAuthUser();
 
   return (
     <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col border-r border-base-300 bg-base-200 sticky top-0 h-screen">
-
-      <div className="p-6 border-b border-base-300">
+      <div className="border-b border-base-300 px-6 py-5">
         <Link to="/" className="flex items-center gap-3">
           <ShipWheelIcon className="size-9 text-primary" />
 
-          <span className="text-3xl font-bold font-mono bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-wide">
+          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-3xl font-bold font-mono tracking-wide text-transparent">
             Streamly
           </span>
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
-        {navItems.map((item) => {
-          const Icon = item.icon;
+      <nav className="flex-1 px-4 py-6">
+        <ul className="space-y-2">
+          {navigation.map((item) => {
+            const Icon = item.icon;
 
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`btn btn-ghost w-full justify-start gap-3 normal-case ${
-                pathname === item.path ? "btn-active" : ""
-              }`}
-            >
-              <Icon className="size-5" />
+            const isActive = pathname === item.path;
 
-              {item.label}
-            </Link>
-          );
-        })}
+            return (
+              <li key={item.id}>
+                <Link
+                  to={item.path}
+                  className={`btn w-full justify-start gap-3 normal-case transition-all duration-200 ${
+                    isActive ? "btn-primary" : "btn-ghost hover:bg-base-300"
+                  }`}
+                >
+                  <Icon className="size-5" />
+
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
 
       <div className="border-t border-base-300 p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 rounded-xl bg-base-100 p-3">
           <div className="avatar">
-            <div className="w-11 rounded-full">
-              <img src={authUser?.profilePic} alt={authUser?.fullName} />
+            <div className="w-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+              <img
+                src={authUser?.profilePic}
+                alt={authUser?.fullName || "User"}
+              />
             </div>
           </div>
 
           <div className="min-w-0 flex-1">
-            <h3 className="truncate font-semibold">{authUser?.fullName}</h3>
+            <h2 className="truncate font-semibold">{authUser?.fullName}</h2>
 
-            <p className="text-success text-sm flex items-center gap-2">
-              <span className="size-2 rounded-full bg-success"></span>
+            <p className="flex items-center gap-2 text-sm text-success">
+              <span className="inline-block h-2 w-2 rounded-full bg-success"></span>
               Online
             </p>
           </div>
