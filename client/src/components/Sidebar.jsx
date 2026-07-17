@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router";
 import { ShipWheelIcon } from "lucide-react";
 
 import useAuthUser from "../hooks/useAuthUser";
-import { navigation } from "../constants/navigation";
+import { sidebarNavigation } from "../constants/navigation";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -22,7 +22,7 @@ const Sidebar = () => {
 
       <nav className="flex-1 px-4 py-6">
         <ul className="space-y-2">
-          {navigation.map((item) => {
+          {sidebarNavigation.map((item) => {
             const Icon = item.icon;
 
             const isActive = pathname === item.path;
@@ -46,25 +46,30 @@ const Sidebar = () => {
       </nav>
 
       <div className="border-t border-base-300 p-4">
-        <div className="flex items-center gap-3 rounded-xl bg-base-100 p-3">
-          <div className="avatar">
-            <div className="w-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-              <img
-                src={authUser?.profilePic}
-                alt={authUser?.fullName || "User"}
-              />
+        <Link
+          to="/profile"
+          className="block cursor-pointer rounded-xl bg-base-100 p-3 transition-all duration-200 hover:scale-[1.02] hover:bg-base-300 hover:shadow-md"
+        >
+          <div className="flex items-center gap-3">
+            <div className="avatar">
+              <div className="w-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+                <img
+                  src={authUser?.profilePic}
+                  alt={authUser?.fullName || "User"}
+                />
+              </div>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <h2 className="truncate font-semibold">{authUser?.fullName}</h2>
+
+              <p className="flex items-center gap-2 text-sm text-success">
+                <span className="inline-block h-2 w-2 rounded-full bg-success"></span>
+                Online
+              </p>
             </div>
           </div>
-
-          <div className="min-w-0 flex-1">
-            <h2 className="truncate font-semibold">{authUser?.fullName}</h2>
-
-            <p className="flex items-center gap-2 text-sm text-success">
-              <span className="inline-block h-2 w-2 rounded-full bg-success"></span>
-              Online
-            </p>
-          </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );
