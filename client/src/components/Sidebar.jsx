@@ -1,70 +1,76 @@
 import { Link, useLocation } from "react-router";
-import useAuthUser from "../hooks/useAuthUser";
 import { BellIcon, HomeIcon, ShipWheelIcon, UsersIcon } from "lucide-react";
+
+import useAuthUser from "../hooks/useAuthUser";
 
 const Sidebar = () => {
   const { authUser } = useAuthUser();
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const { pathname } = useLocation();
+
+  const navItems = [
+    {
+      label: "Home",
+      path: "/",
+      icon: HomeIcon,
+    },
+    {
+      label: "Friends",
+      path: "/friends",
+      icon: UsersIcon,
+    },
+    {
+      label: "Notifications",
+      path: "/notifications",
+      icon: BellIcon,
+    },
+  ];
 
   return (
-    <aside className="w-64 bg-base-200 border-r border-base-300 hidden lg:flex flex-col h-screen sticky top-0">
-      <div className="p-5 border-b border-base-300">
-        <Link to="/" className="flex items-center gap-2.5">
+    <aside className="hidden lg:flex lg:w-64 xl:w-72 flex-col border-r border-base-300 bg-base-200 sticky top-0 h-screen">
+
+      <div className="p-6 border-b border-base-300">
+        <Link to="/" className="flex items-center gap-3">
           <ShipWheelIcon className="size-9 text-primary" />
-          <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
+
+          <span className="text-3xl font-bold font-mono bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent tracking-wide">
             Streamly
           </span>
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
-        <Link
-          to="/"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-            currentPath === "/" ? "btn-active" : ""
-          }`}
-        >
-          <HomeIcon className="size-5 text-base-content opacity-70" />
-          <span>Home</span>
-        </Link>
+      <nav className="flex-1 p-4 space-y-2">
+        {navItems.map((item) => {
+          const Icon = item.icon;
 
-        <Link
-          to="/friends"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-            currentPath === "/friends" ? "btn-active" : ""
-          }`}
-        >
-          <UsersIcon className="size-5 text-base-content opacity-70" />
-          <span>Friends</span>
-        </Link>
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`btn btn-ghost w-full justify-start gap-3 normal-case ${
+                pathname === item.path ? "btn-active" : ""
+              }`}
+            >
+              <Icon className="size-5" />
 
-        <Link
-          to="/notifications"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-            currentPath === "/notifications" ? "btn-active" : ""
-          }`}
-        >
-          <BellIcon className="size-5 text-base-content opacity-70" />
-          <span>Notifications</span>
-        </Link>
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
 
-      {/* USER PROFILE SECTION */}
-      <div className="p-4 border-t border-base-300 mt-auto">
+      <div className="border-t border-base-300 p-4">
         <div className="flex items-center gap-3">
           <div className="avatar">
-            <div className="w-10 rounded-full">
-              <img
-                src={authUser?.profilePic}
-                alt={authUser?.fullName || "User"}
-              />
+            <div className="w-11 rounded-full">
+              <img src={authUser?.profilePic} alt={authUser?.fullName} />
             </div>
           </div>
-          <div className="flex-1">
-            <p className="font-semibold text-sm">{authUser?.fullName}</p>
-            <p className="text-xs text-success flex items-center gap-1">
-              <span className="size-2 rounded-full bg-success inline-block" />
+
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate font-semibold">{authUser?.fullName}</h3>
+
+            <p className="text-success text-sm flex items-center gap-2">
+              <span className="size-2 rounded-full bg-success"></span>
               Online
             </p>
           </div>
@@ -73,4 +79,5 @@ const Sidebar = () => {
     </aside>
   );
 };
+
 export default Sidebar;
