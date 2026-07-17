@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getFriendRequests } from "../lib/api";
 
 import NotificationsSkeleton from "../components/notifications/NotificationsSkeleton";
+import NoNotificationsFound from "../components/notifications/NoNotificationsFound";
 
 const NotificationsPage = () => {
   const { data, isLoading } = useQuery({
@@ -19,6 +20,19 @@ const NotificationsPage = () => {
       </div>
     );
   }
+
+  if (
+    incomingRequests.length === 0 &&
+    acceptedRequests.length === 0
+  ) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <NoNotificationsFound />
+      </div>
+    );
+  }
+
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto max-w-5xl">
