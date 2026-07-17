@@ -1,42 +1,53 @@
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
+import { LogOutIcon, ShipWheelIcon } from "lucide-react";
+
 import useAuthUser from "../hooks/useAuthUser";
-import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
 import useLogout from "../hooks/useLogout";
 
 const Navbar = () => {
   const { authUser } = useAuthUser();
-  const location = useLocation();
-
   const { logoutMutation } = useLogout();
 
   return (
-    <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-end w-full">
-          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-            <Link to={"/notifications"}>
-              <button className="btn btn-ghost btn-circle">
-                <BellIcon className="h-6 w-6 text-base-content opacity-70" />
-              </button>
-            </Link>
-          </div>
+    <header className="sticky top-0 z-40 border-b border-base-300 bg-base-200/90 backdrop-blur-md">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-2 lg:hidden">
+          <ShipWheelIcon className="size-8 text-primary" />
 
+          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-xl font-bold font-mono text-transparent">
+            Streamly
+          </span>
+        </Link>
+
+        <div className="hidden lg:block" />
+
+        <div className="flex items-center gap-3">
           <div className="avatar">
-            <div className="w-9 rounded-full">
+            <div className="w-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
               <img
                 src={authUser?.profilePic}
-                alt="User Avatar"
-                rel="noreferrer"
+                alt={authUser?.fullName || "User"}
               />
             </div>
           </div>
 
-          <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
-            <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+          <div className="hidden sm:block">
+            <h2 className="font-semibold leading-none">{authUser?.fullName}</h2>
+
+            <p className="text-sm text-success">Online</p>
+          </div>
+
+          <button
+            onClick={logoutMutation}
+            className="btn btn-ghost btn-circle"
+            aria-label="Logout"
+          >
+            <LogOutIcon className="size-5" />
           </button>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
+
 export default Navbar;
