@@ -1,22 +1,42 @@
-import { BellIcon, HomeIcon, UsersIcon } from "lucide-react";
+// navigation.js
 
-export const navigation = [
+export const sidebarNavigation = [
   {
-    id: 1,
     label: "Home",
     path: "/",
     icon: HomeIcon,
   },
   {
-    id: 2,
     label: "Friends",
     path: "/friends",
     icon: UsersIcon,
   },
   {
-    id: 3,
     label: "Notifications",
     path: "/notifications",
     icon: BellIcon,
+  },
+];
+
+export const bottomNavigation = [
+  {
+    label: "Home",
+    path: "/",
+    icon: HomeIcon,
+  },
+  {
+    label: "Friends",
+    path: "/friends",
+    icon: UsersIcon,
+  },
+  {
+    label: "Notifications",
+    path: "/notifications",
+    icon: BellIcon,
+  },
+  {
+    label: "Profile",
+    path: "/profile",
+    icon: UserIcon,
   },
 ];
