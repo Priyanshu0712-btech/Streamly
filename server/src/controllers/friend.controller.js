@@ -43,7 +43,7 @@ export const acceptFriendRequest = async (req, res) => {
 
 export const rejectFriendRequest = async (req, res) => {
   try {
-    const result = await rejectFriendRequestService(
+    const result = await friendService.rejectFriendRequestService(
       req.params.id,
       req.user.id
     );

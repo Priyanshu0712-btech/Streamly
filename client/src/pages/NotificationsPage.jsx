@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { acceptFriendRequest, getFriendRequests } from "../lib/api";
+import { acceptFriendRequest, rejectFriendRequest, getFriendRequests, } from "../lib/api";
 
 import NotificationHeader from "../components/notifications/NotificationHeader";
 import IncomingRequestCard from "../components/notifications/IncomingRequestCard";
@@ -11,12 +11,14 @@ import NoNotificationsFound from "../components/notifications/NoNotificationsFou
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
 
+  // Fetch all notifications
   const { data, isLoading } = useQuery({
     queryKey: ["friendRequests"],
     queryFn: getFriendRequests,
   });
 
-  const { mutate: acceptRequest, isPending } = useMutation({
+  // Accept Friend Request
+  const { mutate: acceptRequest, isPending: isAccepting } = useMutation({
     mutationFn: acceptFriendRequest,
 
     onSuccess: async () => {
@@ -32,6 +34,22 @@ const NotificationsPage = () => {
         }),
         queryClient.invalidateQueries({
           queryKey: ["outgoingFriendReqs"],
+        }),
+      ]);
+    },
+  });
+
+  // Reject Friend Request
+  const { mutate: rejectRequest, isPending: isRejecting } = useMutation({
+    mutationFn: rejectFriendRequest,
+
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["friendRequests"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["users"],
         }),
       ]);
     },
@@ -61,7 +79,7 @@ const NotificationsPage = () => {
       <div className="container mx-auto max-w-5xl">
         <NotificationHeader requestCount={incomingRequests.length} />
 
-        {/* Incoming Requests */}
+        {/* Incoming Friend Requests */}
 
         {incomingRequests.length > 0 && (
           <section className="mb-10">
@@ -73,14 +91,15 @@ const NotificationsPage = () => {
                   key={request._id}
                   request={request}
                   onAccept={acceptRequest}
-                  isPending={isPending}
+                  onReject={rejectRequest}
+                  isPending={isAccepting || isRejecting}
                 />
               ))}
             </div>
           </section>
         )}
 
-        {/* Activity */}
+        {/* Recent Activity */}
 
         {acceptedRequests.length > 0 && (
           <section>
