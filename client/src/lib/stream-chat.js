@@ -6,4 +6,4 @@ if (!apiKey) {
   throw new Error("VITE_STREAM_API_KEY is missing");
 }
 
-export const streamClient = StreamChat.getInstance(apiKey);
+export const streamChatClient = StreamChat.getInstance(apiKey);
