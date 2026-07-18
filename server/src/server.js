@@ -6,6 +6,7 @@ import path from "path";
 
 import authRoutes from "./routes/auth.routes.js";
 import friendRoutes from "./routes/friend.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -33,6 +34,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/friends", friendRoutes);
+app.use("/api/v1/chat", chatRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));

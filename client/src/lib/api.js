@@ -79,3 +79,8 @@ export async function getBlockedUsers() {
   const response = await axiosInstance.get("/friends/blocked");
   return response.data;
 }
+
+export async function getStreamToken() {
+  const response = await axiosInstance.get("/chat/token");
+  return response.data;
+}

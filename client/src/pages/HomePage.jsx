@@ -183,14 +183,15 @@ const HomePage = () => {
                         <div className="avatar">
                           <div className="size-16 rounded-full overflow-hidden">
                             <img
-                              src={user.profilePic }
+                              src={user.profilePic}
                               alt={user.fullName || "User profile"}
+                              onError={(e) => {
+                                e.currentTarget.src = "/default-avatar.webp";
+                              }}
                               className="w-full h-full object-cover"
                             />
                           </div>
                         </div>
-
-                        {/* NAME AND LOCATION */}
 
                         <div>
                           <h3 className="font-semibold text-lg">
