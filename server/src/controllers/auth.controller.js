@@ -9,6 +9,17 @@ const generateToken = (userId) => {
   });
 };
 
+const setAuthCookie = (res, token) => {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+};
+
 export const signup = async (req, res) => {
   try {
     const { email, password, fullName } = req.body;
@@ -64,11 +75,7 @@ export const signup = async (req, res) => {
 
     // Create Stream user
     try {
-      await upsertStreamUser({
-        id: newUser._id.toString(),
-        name: newUser.fullName,
-        image: newUser.profilePic || "",
-      });
+      await upsertStreamUser(newUser);
 
       console.log(`Stream user created for ${newUser.fullName}`);
     } catch (streamError) {
@@ -81,12 +88,7 @@ export const signup = async (req, res) => {
     // Set Cookie
     const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookie(res, token);
 
     // Response
     res.status(201).json({
@@ -129,6 +131,12 @@ export const login = async (req, res) => {
 
     const isMatch = await user.matchPassword(password);
 
+    try {
+      await upsertStreamUser(user);
+    } catch (error) {
+      console.log("Failed to sync Stream user:", error.message);
+    }
+
     if (!isMatch) {
       return res.status(401).json({
         message: "Invalid credentials",
@@ -139,12 +147,7 @@ export const login = async (req, res) => {
 
     const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookie(res, token);
 
     user.password = undefined;
 
@@ -215,11 +218,8 @@ export async function onboard(req, res) {
       return res.status(404).json({ message: "User not found" });
 
     try {
-      await upsertStreamUser({
-        id: updatedUser._id.toString(),
-        name: updatedUser.fullName,
-        image: updatedUser.profilePic || "",
-      });
+      await upsertStreamUser(updatedUser);
+
       console.log(
         `Stream user updated after onboarding for ${updatedUser.fullName}`,
       );
