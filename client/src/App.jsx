@@ -8,6 +8,8 @@ import OnboardingPage from "./pages/OnboardingPage";
 import FriendsPage from "./pages/FriendPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
+import ChatPage from "./pages/ChatPage";
+
 import Layout from "./components/Layout";
 
 import useAuthUser from "./hooks/useAuthUser";
@@ -89,6 +91,19 @@ const App = () => {
                 isOnboarded ? (
                   <Layout showSidebar>
                     <ProfilePage />
+                  </Layout>
+                ) : (
+                  <Navigate to="/onboarding" replace />
+                )
+              }
+            />
+
+            <Route
+              path="/chat"
+              element={
+                isOnboarded ? (
+                  <Layout showSidebar>
+                    <ChatPage />
                   </Layout>
                 ) : (
                   <Navigate to="/onboarding" replace />

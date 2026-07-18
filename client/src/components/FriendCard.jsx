@@ -182,7 +182,7 @@ const FriendCard = ({ friend }) => {
         {/* MESSAGE BUTTON */}
 
         <Link
-          to="#"
+          to="/chat"
           className="btn btn-outline w-full"
         >
 
