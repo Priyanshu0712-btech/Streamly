@@ -5,6 +5,7 @@ import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
 import friendRoutes from "./routes/friend.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
 import { connectDB } from "./config/db.js";
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/friends", friendRoutes);
+app.use("/api/v1/chat", chatRoutes);
 
 // Optional API test route
 app.get("/", (req, res) => {

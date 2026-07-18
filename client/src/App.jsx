@@ -1,21 +1,22 @@
 import { Navigate, Route, Routes } from "react-router";
+import { Toaster } from "react-hot-toast";
 
-import HomePage from "./pages/HomePage.jsx";
+import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import OnboardingPage from "./pages/OnboardingPage.jsx";
+import OnboardingPage from "./pages/OnboardingPage";
 import FriendsPage from "./pages/FriendPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
+import Layout from "./components/Layout";
 
-import { Toaster } from "react-hot-toast";
+import useAuthUser from "./hooks/useAuthUser";
+import { useThemeStore } from "./store/useThemeStore";
 
-import useAuthUser from "./hooks/useAuthUser.js";
-import Layout from "./components/Layout.jsx";
-import { useThemeStore } from "./store/useThemeStore.js";
+import { StreamChatProvider } from "./providers/StreamChatProvider";
 
 const App = () => {
-  const { isLoading, authUser } = useAuthUser();
+  const { authUser, isLoading } = useAuthUser();
   const { theme } = useThemeStore();
 
   const isAuthenticated = Boolean(authUser);
@@ -23,102 +24,89 @@ const App = () => {
 
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex h-screen items-center justify-center">
+        <span className="loading loading-spinner loading-lg" />
       </div>
     );
   }
 
   return (
-    <div className="h-screen">
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <HomePage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            !isAuthenticated ? (
-              <SignUpPage />
-            ) : (
-              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-            )
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            !isAuthenticated ? (
-              <LoginPage />
-            ) : (
-              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-            )
-          }
-        />
+    <div data-theme={theme} className="h-screen">
+      <Toaster position="top-right" />
 
-        <Route
-          path="/onboarding"
-          element={
-            isAuthenticated ? (
-              !isOnboarded ? (
-                <OnboardingPage />
-              ) : (
-                <Navigate to="/" />
-              )
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+      {isAuthenticated ? (
+        <StreamChatProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                isOnboarded ? (
+                  <Layout showSidebar>
+                    <HomePage />
+                  </Layout>
+                ) : (
+                  <Navigate to="/onboarding" replace />
+                )
+              }
+            />
 
-        <Route
-          path="/friends"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <FriendsPage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
+            <Route
+              path="/onboarding"
+              element={
+                !isOnboarded ? <OnboardingPage /> : <Navigate to="/" replace />
+              }
+            />
 
-        <Route
-          path="/notifications"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <NotificationsPage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
+            <Route
+              path="/friends"
+              element={
+                isOnboarded ? (
+                  <Layout showSidebar>
+                    <FriendsPage />
+                  </Layout>
+                ) : (
+                  <Navigate to="/onboarding" replace />
+                )
+              }
+            />
 
-        <Route
-          path="/profile"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <ProfilePage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
-      </Routes>
+            <Route
+              path="/notifications"
+              element={
+                isOnboarded ? (
+                  <Layout showSidebar>
+                    <NotificationsPage />
+                  </Layout>
+                ) : (
+                  <Navigate to="/onboarding" replace />
+                )
+              }
+            />
+
+            <Route
+              path="/profile"
+              element={
+                isOnboarded ? (
+                  <Layout showSidebar>
+                    <ProfilePage />
+                  </Layout>
+                ) : (
+                  <Navigate to="/onboarding" replace />
+                )
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </StreamChatProvider>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      )}
     </div>
   );
 };
