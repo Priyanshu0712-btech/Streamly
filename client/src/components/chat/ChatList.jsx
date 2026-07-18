@@ -1,18 +1,15 @@
-import { useState } from "react";
-
 import useChat from "../../hooks/useChat";
 
 import ChatItem from "./ChatItem";
 import ChatSkeleton from "./ChatSkeleton";
 
-const ChatList = () => {
+const ChatList = ({
+  selectedChannel,
+  setSelectedChannel,
+}) => {
   const { conversations, isLoading } = useChat();
 
-  const [selectedChannel, setSelectedChannel] = useState(null);
-
-  if (isLoading) {
-    return <ChatSkeleton />;
-  }
+  if (isLoading) return <ChatSkeleton />;
 
   if (!conversations.length) {
     return (
