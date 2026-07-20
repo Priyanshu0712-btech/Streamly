@@ -9,14 +9,12 @@ const useStreamChat = () => {
   const { authUser } = useAuthUser();
 
   const [client, setClient] = useState(null);
-  const [isConnecting, setIsConnecting] = useState(false);
 
-  // Prevent multiple connections
   const connectedRef = useRef(false);
 
   const {
     data,
-    isLoading: isTokenLoading,
+    isLoading: tokenLoading,
     error,
   } = useQuery({
     queryKey: ["stream-token"],
@@ -36,12 +34,10 @@ const useStreamChat = () => {
       return;
     }
 
-    let mounted = true;
+    let ignore = false;
 
     const connect = async () => {
       try {
-        setIsConnecting(true);
-
         await streamChatClient.connectUser(
           {
             id: authUser._id,
@@ -51,26 +47,21 @@ const useStreamChat = () => {
           data.token,
         );
 
+        if (ignore) return;
+
         connectedRef.current = true;
+        setClient(streamChatClient);
 
-        if (mounted) {
-          setClient(streamChatClient);
-        }
-
-        console.log("Stream Chat Connected");
+        console.log("✅ Stream connected");
       } catch (err) {
-        console.error("Failed to connect Stream:", err);
-      } finally {
-        if (mounted) {
-          setIsConnecting(false);
-        }
+        console.error("Stream connection failed:", err);
       }
     };
 
     connect();
 
     return () => {
-      mounted = false;
+      ignore = true;
     };
   }, [authUser, data]);
 
@@ -78,14 +69,16 @@ const useStreamChat = () => {
     return () => {
       if (connectedRef.current) {
         streamChatClient.disconnectUser();
+
         connectedRef.current = false;
+        setClient(null);
       }
     };
   }, []);
 
   return {
     client,
-    isLoading: isTokenLoading || isConnecting,
+    isLoading: tokenLoading || !client,
     error,
   };
 };

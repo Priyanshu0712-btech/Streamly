@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { useStream } from "../providers/StreamChatProvider";
@@ -10,13 +9,16 @@ const useChat = () => {
     data: channels = [],
     isLoading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["chat-channels"],
     enabled: !!client,
     queryFn: async () => {
       const filters = {
         type: "messaging",
-        members: { $in: [client.userID] },
+        members: {
+          $in: [client.userID],
+        },
       };
 
       const sort = {
@@ -28,16 +30,15 @@ const useChat = () => {
         state: true,
       };
 
-      return client.queryChannels(filters, sort, options);
+      return await client.queryChannels(filters, sort, options);
     },
   });
 
-  const conversations = useMemo(() => channels, [channels]);
-
   return {
-    conversations,
+    channels,
     isLoading,
     error,
+    refetch,
   };
 };
 
