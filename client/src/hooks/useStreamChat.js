@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { streamChatClient } from "../lib/stream-chat";
@@ -7,40 +7,34 @@ import useAuthUser from "./useAuthUser";
 
 const useStreamChat = () => {
   const { authUser } = useAuthUser();
-
   const [client, setClient] = useState(null);
-  const [isConnecting, setIsConnecting] = useState(false);
-
-  // Prevent multiple connections
-  const connectedRef = useRef(false);
 
   const {
     data,
-    isLoading: isTokenLoading,
+    isLoading: tokenLoading,
     error,
   } = useQuery({
     queryKey: ["stream-token"],
     queryFn: getStreamToken,
     enabled: !!authUser,
     staleTime: 1000 * 60 * 30,
-    retry: 1,
   });
 
   useEffect(() => {
-    if (
-      !authUser ||
-      !data?.token ||
-      connectedRef.current ||
-      streamChatClient.userID
-    ) {
-      return;
-    }
-
-    let mounted = true;
+    if (!authUser || !data?.token) return;
 
     const connect = async () => {
       try {
-        setIsConnecting(true);
+        // Already connected as this user
+        if (streamChatClient.userID === authUser._id) {
+          setClient(streamChatClient);
+          return;
+        }
+
+        // Connected as someone else
+        if (streamChatClient.userID) {
+          await streamChatClient.disconnectUser();
+        }
 
         await streamChatClient.connectUser(
           {
@@ -51,41 +45,18 @@ const useStreamChat = () => {
           data.token,
         );
 
-        connectedRef.current = true;
-
-        if (mounted) {
-          setClient(streamChatClient);
-        }
-
-        console.log("Stream Chat Connected");
+        setClient(streamChatClient);
       } catch (err) {
-        console.error("Failed to connect Stream:", err);
-      } finally {
-        if (mounted) {
-          setIsConnecting(false);
-        }
+        console.error("Stream connection failed:", err);
       }
     };
 
     connect();
-
-    return () => {
-      mounted = false;
-    };
   }, [authUser, data]);
-
-  useEffect(() => {
-    return () => {
-      if (connectedRef.current) {
-        streamChatClient.disconnectUser();
-        connectedRef.current = false;
-      }
-    };
-  }, []);
 
   return {
     client,
-    isLoading: isTokenLoading || isConnecting,
+    isLoading: tokenLoading || !client,
     error,
   };
 };
