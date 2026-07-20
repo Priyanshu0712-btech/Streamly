@@ -16,10 +16,7 @@ const ChatSidebar = ({
       <ChatSearch />
 
       <div className="flex-1 overflow-hidden">
-        <ChatList
-          selectedChannel={selectedChannel}
-          setSelectedChannel={setSelectedChannel}
-        />
+        <ChatList />
       </div>
     </aside>
   );

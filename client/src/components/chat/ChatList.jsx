@@ -2,11 +2,10 @@ import useChat from "../../hooks/useChat";
 
 import ChatItem from "./ChatItem";
 import ChatSkeleton from "./ChatSkeleton";
+import { useChatContext } from "../../context/ChatContext";
 
-const ChatList = ({
-  selectedChannel,
-  setSelectedChannel,
-}) => {
+const ChatList = () => {
+  const { selectedChannel, setSelectedChannel } = useChatContext();
   const { conversations, isLoading } = useChat();
 
   if (isLoading) return <ChatSkeleton />;
