@@ -1,13 +1,9 @@
-import {
-  Chat,
-  Channel,
-  Window,
-  MessageList,
-  MessageInput,
-} from "stream-chat-react";
-
+import { Chat, Channel, Window } from "stream-chat-react";
 import { useStream } from "../../providers/StreamChatProvider";
+
 import ChatHeader from "./ChatHeader";
+import CustomMessageList from "./MessageList";
+import CustomMessageInput from "./MessageInput";
 
 const ChatWindow = ({ channel }) => {
   const { client } = useStream();
@@ -20,9 +16,9 @@ const ChatWindow = ({ channel }) => {
         <Window>
           <ChatHeader channel={channel} />
 
-          <MessageList />
+          <CustomMessageList />
 
-          <MessageInput />
+          <CustomMessageInput />
         </Window>
       </Channel>
     </Chat>
