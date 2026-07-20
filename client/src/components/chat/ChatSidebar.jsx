@@ -2,14 +2,16 @@ import { Search } from "lucide-react";
 
 import useChat from "../../hooks/useChat";
 import { useChatContext } from "../../context/ChatContext";
+import { useStream } from "../../providers/StreamChatProvider";
 
 import ChatSkeleton from "./ChatSkeleton";
 
 const ChatSidebar = () => {
+  const { client } = useStream();
   const { channels, isLoading } = useChat();
   const { selectedChannel, setSelectedChannel } = useChatContext();
 
-  if (isLoading) {
+  if (isLoading || !client) {
     return (
       <aside className="w-80 border-r">
         <ChatSkeleton />
@@ -18,25 +20,18 @@ const ChatSidebar = () => {
   }
 
   return (
-    <aside className="flex w-80 flex-col border-r bg-base-100">
-      {/* Header */}
+    <aside className="flex h-full w-full flex-col border-r bg-base-100 md:w-80 lg:w-96">
       <div className="border-b p-4">
         <h2 className="text-xl font-bold">Chats</h2>
       </div>
 
-      {/* Search */}
       <div className="border-b p-4">
         <label className="input input-bordered flex items-center gap-2">
           <Search size={18} />
-          <input
-            type="text"
-            className="grow"
-            placeholder="Search..."
-          />
+          <input type="text" className="grow" placeholder="Search..." />
         </label>
       </div>
 
-      {/* Conversation List */}
       <div className="flex-1 overflow-y-auto">
         {channels.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm opacity-60">
@@ -44,8 +39,10 @@ const ChatSidebar = () => {
           </div>
         ) : (
           channels.map((channel) => {
-            const otherUser = Object.values(channel.state.members).find(
-              (member) => member.user.id !== channel.client.userID
+            const members = Object.values(channel.state.members);
+
+            const otherUser = members.find(
+              (member) => member.user?.id !== client.userID,
             )?.user;
 
             const lastMessage =
@@ -56,23 +53,21 @@ const ChatSidebar = () => {
                 key={channel.cid}
                 onClick={() => setSelectedChannel(channel)}
                 className={`flex w-full items-center gap-3 border-b p-4 text-left transition hover:bg-base-200 ${
-                  selectedChannel?.cid === channel.cid
-                    ? "bg-base-200"
-                    : ""
+                  selectedChannel?.cid === channel.cid ? "bg-base-200" : ""
                 }`}
               >
                 <div className="avatar">
                   <div className="w-12 rounded-full">
                     <img
-                      src={otherUser?.image}
-                      alt={otherUser?.name}
+                      src={otherUser?.image || "/default-avatar.png"}
+                      alt={otherUser?.name || "User"}
                     />
                   </div>
                 </div>
 
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate font-semibold">
-                    {otherUser?.name}
+                    {otherUser?.name || "Unknown User"}
                   </h3>
 
                   <p className="truncate text-sm opacity-60">

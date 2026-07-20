@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
 import { useStream } from "../providers/StreamChatProvider";
 
 const useChat = () => {
@@ -11,26 +10,24 @@ const useChat = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["chat-channels"],
+    queryKey: ["chat-channels", client?.userID],
     enabled: !!client,
     queryFn: async () => {
-      const filters = {
-        type: "messaging",
-        members: {
-          $in: [client.userID],
+      return client.queryChannels(
+        {
+          type: "messaging",
+          members: {
+            $in: [client.userID],
+          },
         },
-      };
-
-      const sort = {
-        last_message_at: -1,
-      };
-
-      const options = {
-        watch: true,
-        state: true,
-      };
-
-      return await client.queryChannels(filters, sort, options);
+        {
+          last_message_at: -1,
+        },
+        {
+          watch: true,
+          state: true,
+        }
+      );
     },
   });
 

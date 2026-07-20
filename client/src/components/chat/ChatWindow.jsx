@@ -3,6 +3,7 @@ import {
   Channel,
   MessageInput,
   MessageList,
+  Thread,
   Window,
 } from "stream-chat-react";
 
@@ -16,6 +17,8 @@ const ChatWindow = () => {
   const { client } = useStream();
   const { selectedChannel } = useChatContext();
 
+  if (!client) return null;
+
   if (!selectedChannel) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -24,20 +27,20 @@ const ChatWindow = () => {
     );
   }
 
-  if (!client) return null;
-
   return (
-    <Chat client={client}>
-      <Channel channel={selectedChannel}>
-        <Window>
-          <ChatHeader channel={selectedChannel} />
+    <div className="flex h-full w-full flex-col">
+      <Chat client={client}>
+        <Channel channel={selectedChannel}>
+          <Window>
+            <ChatHeader channel={selectedChannel} />
+            <MessageList />
+            <MessageInput focus />
+          </Window>
 
-          <MessageList />
-
-          <MessageInput />
-        </Window>
-      </Channel>
-    </Chat>
+          <Thread />
+        </Channel>
+      </Chat>
+    </div>
   );
 };
 
