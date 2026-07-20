@@ -59,45 +59,29 @@ const FriendCard = ({ friend }) => {
   };
 
   const handleMessage = async () => {
-    if (!client) return;
+  if (!client) return;
 
-    try {
-      console.time("Open Chat");
+  try {
+    const channelId = [client.userID, friend._id].sort().join("-");
 
-      // Unique channel id for every pair of users
-      const channelId = [client.userID, friend._id].sort().join("-");
+    const channel = client.channel("messaging", channelId, {
+      members: [client.userID, friend._id],
+    });
 
-      console.log("Creating channel:", channelId);
+    await channel.watch();
 
-      const channel = client.channel("messaging", channelId, {
-        members: [client.userID, friend._id],
-      });
+    setSelectedChannel(channel);
 
-      console.log("Watching channel...");
-
-      await channel.watch();
-
-      console.log("Channel ready");
-
-      setSelectedChannel(channel);
-
-      navigate("/chat");
-
-      console.timeEnd("Open Chat");
-    } catch (error) {
-      console.error("Failed to open chat:", error);
-      console.timeEnd("Open Chat");
-    }
-  };
+    navigate("/chat");
+  } catch (error) {
+    console.error("Failed to open chat:", error);
+  }
+};
 
   return (
     <div className="card bg-base-200 hover:shadow-md transition-shadow">
       <div className="card-body p-4">
-        {/* USER INFORMATION */}
-
         <div className="flex items-center gap-3 mb-3">
-          {/* PROFILE PICTURE */}
-
           <div className="avatar">
             <div className="size-12 rounded-full overflow-hidden">
               <img
@@ -108,13 +92,9 @@ const FriendCard = ({ friend }) => {
             </div>
           </div>
 
-          {/* USER NAME */}
-
           <div className="min-w-0 flex-1">
             <h3 className="font-semibold truncate">{friend.fullName}</h3>
           </div>
-
-          {/* OPTIONS MENU */}
 
           <div className="dropdown dropdown-end">
             <button
@@ -150,7 +130,6 @@ const FriendCard = ({ friend }) => {
           </div>
         </div>
 
-        {/* LANGUAGE */}
 
         {friend.nativeLanguage && (
           <div className="flex flex-wrap gap-1.5 mb-3">
