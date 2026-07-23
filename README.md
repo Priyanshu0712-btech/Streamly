@@ -4,6 +4,12 @@ A modern real-time chat application built with the MERN stack and Stream Chat SD
 
 ---
 
+## 🚀 Live Demo
+
+🔗 **Live Application:** [Live-demo](https://streamly-frontend-mxg0.onrender.com/)
+
+---
+
 ## 🚀 Features
 
 - 🔐 JWT Authentication
@@ -146,13 +152,26 @@ npm run dev
 
 ## 📸 Screenshots
 
-> Add screenshots or GIFs of:
->
-> - Login Page
-> - Home Page
-> - Friends Page
-> - Chat Page
-> - Theme Selector
+### 🔐 Authentication
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6338735e-c3d2-4487-a693-a2da218a27ec" alt="Sign Up Page" width="45%" />
+  <img src="https://github.com/user-attachments/assets/21575aea-e4b8-4170-9a80-1d2c2833a550" alt="Login Page" width="45%" />
+</p>
+
+### 🏠 Home & 👥 Friends
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/39a7cc44-604c-41c8-941f-4050c37382b6" alt="Home Page" width="45%" />
+  <img src="https://github.com/user-attachments/assets/a998d4dc-ef6e-43b8-a490-e7211d22c094" alt="Friends Page" width="45%" />
+</p>
+
+### 💬 Chat & 🎨 Theme Support
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/dad2a6e8-78aa-4418-9006-0530ff503abd" alt="Chat Page" width="45%" />
+  <img src="https://github.com/user-attachments/assets/789117b6-8c9e-4004-b53d-faef9aae13f3" alt="Theme Support" width="45%" />
+</p>
 
 ---
 
