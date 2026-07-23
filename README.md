@@ -78,7 +78,7 @@ streamly/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/your-username/streamly.git
+git clone https://github.com/Priyanshu0712-btech/Streamly.git
 ```
 
 ```bash
@@ -197,15 +197,8 @@ git push origin feature/your-feature
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
 ## 👨‍💻 Author
 
 **Priyanshu Kumar**
 
-- GitHub: https://github.com/your-github-username
-- LinkedIn: https://linkedin.com/in/your-linkedin-profile
+- GitHub: [https://github.com/Priyanshu0712-btech/Streamly.git]
